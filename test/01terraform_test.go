@@ -3,18 +3,21 @@ package test
 import (
 	"testing"
   "fmt"
-  "os"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
+	"github.com/gruntwork-io/terratest/modules/shell"
+  test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
 
 // An example of how to test the simple Terraform module in examples/terraform-basic-example using Terratest.
-func TestTerraformBasicExample(t *testing.T) {
+func Test01Terraform(t *testing.T) {
 	t.Parallel()
 
-	expectedText := "test"
-	expectedList := []string{expectedText}
+  exp_ip_load_balancer := "10.17.1.0"
+  exp_ip_masters := []string{}
+  exp_ip_masters = append(exp_ip_masters, "[10.17.2.0]")
+  exp_ip_workers := []string{"[10.17.3.0 10.17.3.1]"}
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
@@ -37,18 +40,17 @@ func TestTerraformBasicExample(t *testing.T) {
 	}
 
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
-	defer terraform.Destroy(t, terraformOptions)
+//	defer terraform.Destroy(t, terraformOptions)
 
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
 	terraform.InitAndApply(t, terraformOptions)
-//  skuba(t)
 
-	// Run `terraform output` to get the values of output variables
+//	// Run `terraform output` to get the values of output variables
 	ip_load_balancer := terraform.Output(t, terraformOptions, "ip_load_balancer")
 	ip_masters := terraform.OutputList(t, terraformOptions, "ip_masters")
 	ip_workers := terraform.OutputList(t, terraformOptions, "ip_workers")
-
-	// Verify we're getting back the outputs we expect
+//
+//	// Verify we're getting back the outputs we expect
 	assert.Equal(t, exp_ip_load_balancer, ip_load_balancer)
 	assert.Equal(t, exp_ip_masters, ip_masters)
 	assert.Equal(t, exp_ip_workers, ip_workers)
@@ -72,8 +74,8 @@ func skuba(t *testing.T) {
 
 func skubaInit(t *testing.T) {
   cluster := "company-cluster"
-  expectedText := "[bootstrap] successfully bootstrapped core add-ons on node \"10.17.2.0\""
-	defer os.RemoveAll(cluster)
+ // expectedText := "[bootstrap] successfully bootstrapped core add-ons on node \"10.17.2.0\""
+ // defer os.RemoveAll(cluster)
   cmdArgs := []string{}
   cmdArgs = append(cmdArgs, "cluster", "init", "--control-plane", "testing-lb.caasp.local", cluster)
 
@@ -84,7 +86,7 @@ func skubaInit(t *testing.T) {
   out, err :=  shell.RunCommandAndGetOutputE(t, cmd)
   fmt.Println(out)
   fmt.Println(err)
-	assert.Equal(t, expectedText, out)
+//	assert.Equal(t, expectedText, out)
 
   assert.DirExists(t, "company-cluster")
 }

@@ -3,16 +3,23 @@ package test
 import (
 	"testing"
   "fmt"
+  //"os"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/gruntwork-io/terratest/modules/shell"
-  "github.com/stretchr/testify/assert"
   test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
 )
 
-func Test(t *testing.T) {
+func Test02Skuba(t *testing.T) {
 	t.Parallel()
+  skuba(t)
 
-	// Deploy skuba
+}
+
+// Deploy CaaSP using skuba
+func skuba(t *testing.T) {
+ // cluster := "company-cluster"
+ // defer os.RemoveAll(cluster)
 	test_structure.RunTestStage(t, "skubaInit", func() {
 		skubaInit(t)
 	})
@@ -28,8 +35,10 @@ func Test(t *testing.T) {
 }
 
 func skubaInit(t *testing.T) {
+  cluster := "company-cluster"
+ // expectedText := "[bootstrap] successfully bootstrapped core add-ons on node \"10.17.2.0\""
   cmdArgs := []string{}
-  cmdArgs = append(cmdArgs, "cluster", "init", "--control-plane", "testing-lb.caasp.local", "company-cluster")
+  cmdArgs = append(cmdArgs, "cluster", "init", "--control-plane", "testing-lb.caasp.local", cluster)
 
   cmd := shell.Command{
     Command: "skuba",
@@ -38,6 +47,7 @@ func skubaInit(t *testing.T) {
   out, err :=  shell.RunCommandAndGetOutputE(t, cmd)
   fmt.Println(out)
   fmt.Println(err)
+//	assert.Equal(t, expectedText, out)
 
   assert.DirExists(t, "company-cluster")
 }
@@ -52,6 +62,7 @@ func skubaBootstrap(t *testing.T) {
     WorkingDir: "company-cluster",
   }
   out, err :=  shell.RunCommandAndGetOutputE(t, cmd)
+
   fmt.Println(out)
   fmt.Println(err)
 }
