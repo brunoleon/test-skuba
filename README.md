@@ -38,6 +38,18 @@ cd test
 dep ensure
 ```
 
+### terraform-provider-libvirt
+
+The libvirt provider for terraform can be installed for openSUSE/SLES from OBS:
+
+https://build.opensuse.org/package/show/systemsmanagement:terraform/terraform-provider-libvirt
+
+### OS image
+
+openSUSE/kubic based images can be downloaded here:
+
+https://download.opensuse.org/distribution/leap/15.1/jeos/
+
 ## Terratest
 
 Terratest is primarily used to test terraform deployments. It is written in Go and has mutiple functions available to interact with various subsytems: https://github.com/gruntwork-io/terratest
